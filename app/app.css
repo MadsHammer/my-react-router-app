@@ -1,15 +1,58 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+html, body { 
+  background-color: #060b1a !important; 
+  color: white !important;
+  min-height: 100vh;
 }
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
+@layer base {
+  body { 
+    background-color: #060b1a; 
+    color: white; 
+    min-height: 100vh; 
+  }
+  p { color: #fff; }
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
+@layer components {
+  .bg-darkblue { background-color: #121b33 !important; }
+  
+  .hover-shadow { 
+    transition: transform 0.2s, box-shadow 0.2s; 
+  }
+  .hover-shadow:hover { 
+    transform: translateY(-5px); 
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important; 
+  }
+
+  .room-pill { 
+    background: #1d2847; 
+    padding: 4px 12px; 
+    border-radius: 20px; 
+    font-size: 0.8rem; 
+    border: 1px solid #3a4b7c; 
+    color: #fff; 
+  }
+
+  .nav-link { 
+    border-radius: 0 !important; 
+    transition: 0.3s; 
+    margin-bottom: 2px; 
+    color: #fff !important; 
+  }
+  .nav-link.active { background-color: #0d6efd !important; }
+  .nav-link:hover:not(.active) { background-color: #1d2847; }
+
+  .card-img-top { 
+    object-fit: cover; 
+    height: 250px; 
+    border-bottom: 1px solid #1d2847; 
+  }
+
+  .card-footer { 
+    color: #fff !important;
+    background-color: #1a2647 !important;
+    border-top: 1px solid #1d2847 !important;
   }
 }
