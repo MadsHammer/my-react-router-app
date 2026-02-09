@@ -1,3 +1,10 @@
-import { type RouteConfig, index } from "@react-router/dev/routes";
+import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
-export default [index("routes/index.tsx")] satisfies RouteConfig;
+export default [
+  // 1. The Home Page (The Grid)
+  index("app.tsx"), 
+
+  // 2. The Project Template (The Details)
+  // ":id" is a placeholder. It matches /projects/1, /projects/23, etc.
+  route("projects/:id", "routes/projects.$id.tsx"), 
+] satisfies RouteConfig;

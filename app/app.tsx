@@ -1,8 +1,9 @@
 import { useLoaderData, useNavigate } from "react-router";
 import { useState, useMemo } from "react";
-import { supabase } from "../lib/supabase";
-import { ProjectCard } from "../components/ProjectCard";
-import { Sidebar } from "../components/Sidebar";
+import { supabase } from "./lib/supabase";
+import { Sidebar } from "./components/Sidebar";
+import { SortControls } from "./components/SortControls";
+import { ProjectGrid } from "./components/ProjectGrid";
 
 // --- 1. THE LOADER (Server-side Data Fetching) ---
 export async function loader() {
@@ -37,45 +38,47 @@ export async function loader() {
   return { projects: mergedProjects || [] };
 }
 
-// --- 2. THE UI COMPONENT ---
 export default function Index() {
   const { projects } = useLoaderData<typeof loader>();
   
-  // Local state for filtering/sorting (UI only)
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
-  // Helper logic
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+
   const uniqueRooms = useMemo(() => 
     [...new Set(projects.map(p => p.room_name))].sort()
   , [projects]);
 
-  const filteredProjects = useMemo(() => {
+  const filteredAndSorted = useMemo(() => {
     let list = [...projects];
     if (selectedRoom) list = list.filter(p => p.room_name === selectedRoom);
+    
     list.sort((a, b) => {
       const dA = new Date(a.project_date || 0).getTime();
       const dB = new Date(b.project_date || 0).getTime();
-      return sortOrder === 'desc' ? dB - dA : dA - dB;
+      return sortOrder === 'newest' ? dB - dA : dA - dB;
     });
     return list;
   }, [projects, selectedRoom, sortOrder]);
 
   return (
-    <div className="container mt-4">
+    <div className="container py-4 px-lg-5">
       <div className="row">
-        <Sidebar 
-          rooms={uniqueRooms} 
-          selectedRoom={selectedRoom} 
-          onSelectRoom={setSelectedRoom} 
-        />
+        {/* Sidebar uses your custom props */}
+        <div className="col-lg">  
+          <Sidebar 
+            rooms={uniqueRooms} 
+            selectedRoom={selectedRoom} 
+            onSelectRoom={setSelectedRoom} 
+          />
+        </div>
         
         <div className="col-lg-9">
-          <div className="row row-cols-1 row-cols-md-2 g-4">
-            {filteredProjects.map(project => (
-              <ProjectCard key={project.project_id} project={project} />
-            ))}
-          </div>
+          {/* New Component 1: Sorting Header */}
+          <SortControls sortOrder={sortOrder} setSortOrder={setSortOrder} />
+          
+          {/* New Component 2: The Grid itself */}
+          <ProjectGrid projects={filteredAndSorted} />
         </div>
       </div>
     </div>

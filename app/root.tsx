@@ -15,15 +15,14 @@ export const links: LinksFunction = () => [
   { 
     rel: "stylesheet", 
     href: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
-  },
-  { rel: "stylesheet", href: "/app.css" } // Make sure your custom css is here too
+  }
 ];
 
 const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <html lang="da"> 
+    <html lang="da">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -31,7 +30,9 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <QueryClientProvider client={queryClient}>
+          <Outlet />
+        </QueryClientProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

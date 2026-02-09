@@ -6,7 +6,7 @@ interface SidebarProps {
 
 export function Sidebar({ rooms, selectedRoom, onSelectRoom }: SidebarProps) {
   return (
-    <div className="bg-darkblue col-lg-3 shadow-sm rounded pt-4 pb-4 px-3 mb-4">
+    <div className="bg-darkblue col shadow-sm rounded pt-4 pb-4 px-3 mb-4">
       <h3 className="h5 text-white mb-3">Filtrer rum</h3>
       <div className="nav flex-column nav-pills">
         <button 

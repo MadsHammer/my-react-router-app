@@ -1,6 +1,9 @@
+import { Link } from "react-router";
+
 export function ProjectCard({ project }: { project: any }) {
   return (
     <div className="col">
+      <Link to={`/projects/${project.project_id}`} className="text-decoration-none">
       <div className="card h-100 bg-darkblue border-0 hover-shadow overflow-hidden">
         <img 
           src={project.featured_url} 
@@ -18,6 +21,7 @@ export function ProjectCard({ project }: { project: any }) {
           </span>
         </div>
       </div>
+      </Link>
     </div>
   );
 }
