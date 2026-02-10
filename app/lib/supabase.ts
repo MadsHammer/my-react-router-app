@@ -1,7 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Hardcode temporarily to bypass the ENV issue
-const supabaseUrl = 'https://utqqeslftnzhwkcfymdj.supabase.co'
-const supabaseAnonKey = 'sb_publishable_ATNOdED0_-mfii0bpR99VQ_AdyBrFJk'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseKey);
