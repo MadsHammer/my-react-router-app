@@ -5,7 +5,7 @@ import { Sidebar } from "./components/Sidebar";
 import { SortControls } from "./components/SortControls";
 import { ProjectGrid } from "./components/ProjectGrid";
 
-// --- 1. THE LOADER (Server-side Data Fetching) ----
+// --- 1. THE LOADER (Server-side Data Fetching) -----
 export async function loader() {
   const [projRes, imgRes, roomRes] = await Promise.all([
     supabase.from('Projects').select('*'),
