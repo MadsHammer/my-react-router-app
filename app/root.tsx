@@ -4,13 +4,14 @@ import {
   Outlet, 
   Scripts, 
   ScrollRestoration, 
-  type LinksFunction  
+  type LinksFunction,
+  useLoaderData // Add this
 } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import "./app.css"; // Your Tailwind/Bootstrap styles
+import { supabase } from "./lib/supabase"; // Import your supabase client
+import { Navbar } from "./components/NavBar"; // Import your Navbar
+import "./app.css";
 
-
-// app/root.tsx
 export const links: LinksFunction = () => [
   { 
     rel: "stylesheet", 
@@ -18,9 +19,18 @@ export const links: LinksFunction = () => [
   }
 ];
 
+// --- THE GLOBAL AUTH LOADER ---
+export async function loader() {
+  // This runs on the server every time a page is requested
+  const { data: { user } } = await supabase.auth.getUser();
+  return { user };
+}
+
 const queryClient = new QueryClient();
 
 export default function App() {
+  const { user } = useLoaderData<typeof loader>();
+
   return (
     <html lang="da">
       <head>
@@ -29,10 +39,16 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-darkblue text-white"> {/* Applied your theme here */}
         <QueryClientProvider client={queryClient}>
-          <Outlet />
+          {/* Navbar stays at the top of every single route */}
+          <Navbar /> 
+          
+          <main>
+            <Outlet context={{ user }} />
+          </main>
         </QueryClientProvider>
+
         <ScrollRestoration />
         <Scripts />
       </body>

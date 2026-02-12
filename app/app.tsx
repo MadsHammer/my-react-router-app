@@ -4,6 +4,7 @@ import { supabase } from "./lib/supabase";
 import { Sidebar } from "./components/Sidebar";
 import { SortControls } from "./components/SortControls";
 import { ProjectGrid } from "./components/ProjectGrid";
+import { Navbar } from "./components/NavBar";
 
 // --- 1. THE LOADER (Server-side Data Fetching) -----
 export async function loader() {
@@ -63,7 +64,9 @@ export default function Index() {
   }, [projects, selectedRoom, sortOrder]);
 
   return (
+   
     <div className="container py-4 px-lg-5">
+      
       <div className="row">
         {/* Sidebar uses your custom props */}
         <div className="col-lg">  

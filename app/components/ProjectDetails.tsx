@@ -15,10 +15,10 @@ interface ProjectDetailProps {
 
 export function ProjectDetailView({ project }: ProjectDetailProps) {
   // -1 means closed, any other number is the index of the image being viewed
-  const [index, setIndex] = useState(-1);
+  const [index, setIndex] = useState(-1); 
 
   // Lightbox needs an array of objects: [{ src: 'url1' }, { src: 'url2' }]
-  const slides = project.images.map((url) => ({ src: url }));
+  const slides = project.images.map((url) => ({ src: url })); 
 
   return (
     <div className="container py-5 text-white animate-fade-in">
