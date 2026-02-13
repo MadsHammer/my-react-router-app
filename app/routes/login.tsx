@@ -1,66 +1,63 @@
-import { Form, useActionData, useNavigation, redirect } from "react-router";
+import { Form, useActionData, useNavigation, redirect, Link } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
 import { supabase } from "../lib/supabase";
 
-// --- 1. THE ACTION (Server-side Logic) ---
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  // Attempt to sign in with Supabase
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    // Return the error to the UI
     return { error: "Ugyldig email eller adgangskode." };
   }
 
-  // If successful, send the admin to the home page (or an admin dashboard)
   return redirect("/");
 }
 
-// --- 2. THE UI (The HTML) ---
 export default function Login() {
   const actionData = useActionData() as { error?: string };
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <div className="container d-flex align-items-center justify-content-center min-vh-100">
-      <div className="col-md-5 col-lg-4">
-        
-        {/* The Login Card */}
-        <div className="card bg-darkblue text-white border-secondary shadow-lg">
-          <div className="card-body p-4 p-md-5">
-            <div className="text-center mb-4">
-              <h2 className="fw-bold">Admin Login</h2>
-              <p className="text-secondary small">Indtast dine oplysninger for at administrere portfolien</p>
+
+    <div className="flex items-center justify-center min-h-screen w-full bg-[#0c1121] px-4" style={{ minHeight: 'calc(100vh - 65px)' }}>
+      <div className="w-full max-w-md animate-fade-in">
+         {/* The Card starts here */}
+         <div className="bg-[#121b33] rounded-2xl border border-white/10 shadow-2xl">
+          <div className="p-8 md:p-12">
+            
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-white mb-2">Admin Login</h2>
+              <p className="text-white/50 text-sm">Indtast dine oplysninger for at administrere portfolien</p>
             </div>
 
-            <Form method="post">
+            <Form method="post" className="space-y-6">
               {/* Email Input */}
-              <div className="mb-3">
-                <label className="form-label small text-uppercase tracking-wider opacity-75">Email</label>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-widest text-white/40 mb-2 ml-1">
+                  Email
+                </label>
                 <input 
                   type="email" 
                   name="email" 
-                  className="form-control bg-dark text-white border-secondary py-2" 
+                  className="w-full bg-[#0c1121] text-white border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/20" 
                   placeholder="din@email.dk"
                   required 
                 />
               </div>
 
               {/* Password Input */}
-              <div className="mb-4">
-                <label className="form-label small text-uppercase tracking-wider opacity-75">Adgangskode</label>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-widest text-white/40 mb-2 ml-1">
+                  Adgangskode
+                </label>
                 <input 
                   type="password" 
                   name="password" 
-                  className="form-control bg-dark text-white border-secondary py-2" 
+                  className="w-full bg-[#0c1121] text-white border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/20" 
                   placeholder="••••••••"
                   required 
                 />
@@ -68,7 +65,7 @@ export default function Login() {
 
               {/* Error Message Display */}
               {actionData?.error && (
-                <div className="alert alert-danger py-2 small border-0 text-center mb-4">
+                <div className="bg-red-500/10 border border-red-500/50 text-red-400 py-3 px-4 rounded-xl text-sm text-center animate-shake">
                   {actionData.error}
                 </div>
               )}
@@ -76,12 +73,12 @@ export default function Login() {
               {/* Submit Button */}
               <button 
                 type="submit" 
-                className="btn btn-primary w-100 py-2 fw-bold"
+                className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:opacity-50 text-white py-3 rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
                   <>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     Logger ind...
                   </>
                 ) : (
@@ -93,10 +90,10 @@ export default function Login() {
         </div>
 
         {/* Footer Link */}
-        <div className="text-center mt-4">
-          <a href="/" className="text-secondary text-decoration-none small">
+        <div className="text-center mt-8">
+          <Link to="/" className="text-white/40 hover:text-white text-sm no-underline transition-colors">
             ← Tilbage til forsiden
-          </a>
+          </Link>
         </div>
       </div>
     </div>

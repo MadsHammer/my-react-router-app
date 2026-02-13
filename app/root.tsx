@@ -12,12 +12,7 @@ import { supabase } from "./lib/supabase"; // Import your supabase client
 import { Navbar } from "./components/NavBar"; // Import your Navbar
 import "./app.css";
 
-export const links: LinksFunction = () => [
-  { 
-    rel: "stylesheet", 
-    href: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
-  }
-];
+
 
 // --- THE GLOBAL AUTH LOADER ---
 export async function loader() {
@@ -39,7 +34,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-darkblue text-white"> {/* Applied your theme here */}
+      <body className="text-white"> {/* Applied your theme here */}
         <QueryClientProvider client={queryClient}>
           {/* Navbar stays at the top of every single route */}
           <Navbar /> 

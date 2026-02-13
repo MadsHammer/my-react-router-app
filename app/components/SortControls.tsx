@@ -6,20 +6,28 @@ interface SortProps {
 
 export function SortControls({ sortOrder, setSortOrder }: SortProps) {
   return (
-    <div className="d-flex justify-content-between align-items-center mb-4 p-3">
-      <h2 className="text-white h4 mb-0">Mine Projekter</h2>
-      <div className="btn-group shadow-sm">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 px-2 gap-4">
+      <h2 className="text-white text-2xl font-bold tracking-tight">Mine Projekter</h2>
+      
+      {/* Custom Toggle Group */}
+      <div className="inline-flex p-1 bg-[#121b33] rounded-xl border border-white/5 shadow-inner">
         <button 
-          className={`btn btn-sm ${sortOrder === 'newest' ? 'btn-primary' : 'btn-outline-primary text-white'}`}
+          className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all duration-200 
+            ${sortOrder === 'newest' 
+              ? 'bg-blue-600 text-white shadow-md' 
+              : 'text-white/40 hover:text-white/70'}`}
           onClick={() => setSortOrder('newest')}
         >
-          Nyeste først
+          Nyeste
         </button>
         <button 
-          className={`btn btn-sm ${sortOrder === 'oldest' ? 'btn-primary' : 'btn-outline-primary text-white'}`}
+          className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all duration-200 
+            ${sortOrder === 'oldest' 
+              ? 'bg-blue-600 text-white shadow-md' 
+              : 'text-white/40 hover:text-white/70'}`}
           onClick={() => setSortOrder('oldest')}
         >
-          Ældste først
+          Ældste
         </button>
       </div>
     </div>

@@ -14,40 +14,43 @@ interface ProjectDetailProps {
 }
 
 export function ProjectDetailView({ project }: ProjectDetailProps) {
-  // -1 means closed, any other number is the index of the image being viewed
-  const [index, setIndex] = useState(-1); 
-
-  // Lightbox needs an array of objects: [{ src: 'url1' }, { src: 'url2' }]
-  const slides = project.images.map((url) => ({ src: url })); 
+  const [index, setIndex] = useState(-1);
+  const slides = project.images.map((url) => ({ src: url }));
 
   return (
-    <div className="container py-5 text-white animate-fade-in">
-      {/* 1. Header & Navigation */}
-      <Link to="/" className="btn btn-outline-light mb-4 shadow-sm">
+    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-white animate-fade-in">
+      {/* 1. Navigation */}
+      <Link 
+        to="/" 
+        className="inline-flex items-center px-4 py-2 border border-white/20 rounded-lg text-sm font-medium hover:bg-white/10 transition-colors mb-8 no-underline text-white"
+      >
         ← Tilbage til oversigt
       </Link>
 
-      <div className="row g-5">
-        {/* 2. Left Side: Title & Description */}
-        <div className="col-lg-8">
-          <h1 className="display-4 fw-bold mb-4">{project.title}</h1>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        {/* 2. Left Side: Title & Description (8 columns wide) */}
+        <div className="lg:col-span-8">
+          <h1 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight">{project.title}</h1>
           
-          <div className="description-box p-4 bg-darkblue rounded shadow-sm mb-5">
-            <h3 className="h5 text-primary mb-3 border-bottom border-primary pb-2">Beskrivelse</h3>
-            <p className="lead opacity-75" style={{ whiteSpace: 'pre-line' }}>
+          <div className="p-6 bg-[#121b33] rounded-2xl border border-white/5 shadow-xl">
+            <h3 className="text-blue-400 font-semibold mb-4 border-b border-blue-400/20 pb-2">
+              Beskrivelse
+            </h3>
+            <p className="text-lg text-white/80 leading-relaxed whitespace-pre-line">
               {project.description}
             </p>
           </div>
         </div>
 
-        {/* 3. Right Side: Meta Info Box */}
-        <div className="col-lg-4">
-          <div className="sticky-top" style={{ top: '2rem' }}>
-            <div className="bg-darkblue p-4 rounded shadow border border-secondary/20">
-              <h4 className="h5 border-bottom border-secondary pb-2 mb-3">Projekt Detaljer</h4>
-              <div className="mb-3">
-                <label className="small text-secondary d-block">Udført den:</label>
-                <span className="fw-bold">
+        {/* 3. Right Side: Meta Info Box (4 columns wide) */}
+        <div className="lg:col-span-4">
+          <div className="lg:sticky lg:top-8">
+            <div className="bg-[#121b33] p-6 rounded-2xl border border-white/10 shadow-2xl">
+              <h4 className="text-xl font-bold border-b border-white/10 pb-3 mb-6">Projekt Detaljer</h4>
+              
+              <div className="mb-6">
+                <label className="block text-xs uppercase tracking-wider text-white/40 mb-1">Udført den:</label>
+                <span className="text-lg font-medium">
                   {new Date(project.project_date).toLocaleDateString('da-DK', {
                     year: 'numeric',
                     month: 'long',
@@ -55,9 +58,12 @@ export function ProjectDetailView({ project }: ProjectDetailProps) {
                   })}
                 </span>
               </div>
+
               <div>
-                <label className="small text-secondary d-block">Rum / Kategori:</label>
-                <span className="room-pill d-inline-block mt-1">{project.room_name}</span>
+                <label className="block text-xs uppercase tracking-wider text-white/40 mb-1">Rum / Kategori:</label>
+                <span className="inline-block mt-2 px-4 py-1.5 bg-blue-600/20 text-blue-400 border border-blue-400/30 rounded-full text-sm font-medium">
+                  {project.room_name}
+                </span>
               </div>
             </div>
           </div>
@@ -65,28 +71,25 @@ export function ProjectDetailView({ project }: ProjectDetailProps) {
       </div>
 
       {/* 4. Gallery Section */}
-      <div className="mt-5">
-        <h3 className="h3 mb-4">Projekt Galleri</h3>
-        <div className="row g-3">
+      <div className="mt-16">
+        <h3 className="text-2xl font-bold mb-8">Projekt Galleri</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {project.images.map((url, i) => (
-            <div key={i} className="col-md-4 col-sm-6">
-              <div 
-                className="gallery-img-container shadow rounded overflow-hidden"
-                style={{ cursor: "pointer" }}
-                onClick={() => setIndex(i)} // Opens lightbox at this image
-              >
-                <img 
-                  src={url} 
-                  className="img-fluid" 
-                  alt={`${project.title} - billede ${i + 1}`} 
-                />
-              </div>
+            <div 
+              key={i} 
+              className="group aspect-[4/3] relative overflow-hidden rounded-xl bg-[#121b33] cursor-pointer border border-white/5"
+              onClick={() => setIndex(i)}
+            >
+              <img 
+                src={url} 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:brightness-110" 
+                alt={`${project.title} - billede ${i + 1}`} 
+              />
             </div>
           ))}
         </div>
       </div>
 
-      {/* 5. The Actual Pop-up Viewer */}
       <Lightbox
         index={index}
         open={index >= 0}
