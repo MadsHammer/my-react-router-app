@@ -1,5 +1,6 @@
 import { useState, type ChangeEvent } from "react";
 import { useSubmit } from "react-router";
+import imageCompression from 'browser-image-compression';
 
 interface ImagePreview {
   id: string;
@@ -19,6 +20,7 @@ export function ProjectForm({
 }) {
   const [images, setImages] = useState<ImagePreview[]>([]);
   const [featuredId, setFeaturedId] = useState<string | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false); // Ny state til komprimering
   const submit = useSubmit();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>, type: 'before' | 'after') => {
@@ -30,7 +32,6 @@ export function ProjectForm({
         type
       }));
       setImages(prev => [...prev, ...newFiles]);
-      // Auto-set the first image as featured if none exists
       if (!featuredId && newFiles.length > 0) setFeaturedId(newFiles[0].id);
     }
   };
@@ -40,29 +41,60 @@ export function ProjectForm({
     if (featuredId === id) setFeaturedId(null);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // GJORT ASYNC FOR AT KUNNE BRUGE AWAIT
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsCompressing(true); // Start visuel feedback
+    
     const formData = new FormData(e.currentTarget);
 
-    // 1. Clear the default empty file inputs
+    // 1. Ryd standard inputs
     formData.delete("before_images");
     formData.delete("after_images");
 
-    // 2. Append files from React state and find the Featured Index
-    let featuredIndex = 0;
-    images.forEach((img, index) => {
-      const fieldName = img.type === 'before' ? 'before_images' : 'after_images';
-      formData.append(fieldName, img.file);
+    // Indstillinger for komprimering
+    const options = {
+      maxSizeMB: 0.8,          // Prøv at ramme under 1MB
+      maxWidthOrHeight: 1920, // Bevarer god kvalitet
+      useWebWorker: true,
+    };
+
+    try {
+      // 2. Loop igennem billeder, komprimer og find Featured Index
+      let featuredIndex = 0;
       
-      if (img.id === featuredId) {
-        featuredIndex = index;
+      for (let i = 0; i < images.length; i++) {
+        const img = images[i];
+        const fieldName = img.type === 'before' ? 'before_images' : 'after_images';
+        
+        let fileToUpload = img.file;
+
+        // Komprimer kun hvis filen er over 1MB
+        if (img.file.size > 1024 * 1024) {
+          try {
+            fileToUpload = await imageCompression(img.file, options);
+          } catch (error) {
+            console.error("Compression failed, using original:", error);
+          }
+        }
+
+        formData.append(fieldName, fileToUpload);
+        
+        if (img.id === featuredId) {
+          featuredIndex = i;
+        }
       }
-    });
 
-    // 3. Add the featured index so the server knows which ID to save
-    formData.append("featured_index", featuredIndex.toString());
+      // 3. Tilføj featured index
+      formData.append("featured_index", featuredIndex.toString());
 
-    submit(formData, { method: "post", encType: "multipart/form-data" });
+      // 4. Send
+      submit(formData, { method: "post", encType: "multipart/form-data" });
+    } catch (err) {
+      console.error("Fejl i submit:", err);
+    } finally {
+      setIsCompressing(false);
+    }
   };
 
   const inputClasses = "block w-full bg-secondary border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/20 focus:border-primary focus:ring-1 focus:ring-primary transition-all appearance-none";
@@ -119,7 +151,6 @@ export function ProjectForm({
 
       {/* 3. Image Grids */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        {/* BEFORE */}
         <div className="space-y-4">
           <label className={labelClasses}>Før Billeder</label>
           <div className="grid grid-cols-2 gap-3">
@@ -140,7 +171,6 @@ export function ProjectForm({
           </div>
         </div>
 
-        {/* AFTER */}
         <div className="space-y-4">
           <label className={`${labelClasses} text-primary/60`}>Efter Billeder</label>
           <div className="grid grid-cols-2 gap-3">
@@ -164,10 +194,10 @@ export function ProjectForm({
 
       <button 
         type="submit" 
-        disabled={isSubmitting || images.length === 0 || !featuredId}
+        disabled={isSubmitting || isCompressing || images.length === 0 || !featuredId}
         className="w-full bg-primary py-5 rounded-2xl font-black uppercase text-white shadow-xl shadow-primary/20 hover:scale-[1.01] transition-all disabled:opacity-20"
       >
-        {isSubmitting ? "Gemmer Projekt..." : "Gem Projekt"}
+        {isCompressing ? "Komprimerer..." : isSubmitting ? "Gemmer Projekt..." : "Gem Projekt"}
       </button>
     </form>
   );
