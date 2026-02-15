@@ -4,17 +4,19 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
 interface ProjectImage {
-  file_name: string; // Corrected from 'url' to match your SQL
+  file_name: string;
   Category: number;
 }
 
 interface ProjectDetailProps {
   project: {
+    project_id: string | number; 
     title: string;
     description: string;
     room_name: string;
     project_date: string;
     images: ProjectImage[];
+    FeaturedImageId?: number | string | null; 
     featured_url?: string;
   };
 }
