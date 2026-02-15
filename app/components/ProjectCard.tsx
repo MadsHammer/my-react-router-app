@@ -1,17 +1,19 @@
-import { Link } from "react-router";
-import { useLoaderData } from "react-router";
+import { Link, useLoaderData } from "react-router";
 
 export function ProjectCard({ project }: { project: any }) {
-
-  const user = useLoaderData() as { user: any }; // Access the global user data
+  // Access global user data (ensure your root loader provides this)
+  const { user } = useLoaderData() as { user: any };
 
   return (
-    // Instead of Bootstrap 'col', we rely on the parent's 'grid' (I'll show that next)
-    <div className="group relative"> 
-      <Link to={`/projects/${project.project_id}`} className="block h-full no-underline">
-        
-        {/* The Card Container */}
-        <div className="h-full bg-[#121b33] rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-black/50 border border-white/5">
+    <div className="group relative h-full">
+      {/* The Main Card Link 
+        Wrapping the visual card makes the whole area clickable for a better UX 
+      */}
+      <Link 
+        to={`/projects/${project.project_id}`} 
+        className="block h-full no-underline"
+      >
+        <div className="h-full bg-secondary rounded-xl overflow-hidden transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:shadow-black/50 border border-white/5 flex flex-col">
           
           {/* Image Wrapper */}
           <div className="relative h-48 w-full overflow-hidden">
@@ -20,34 +22,43 @@ export function ProjectCard({ project }: { project: any }) {
               alt={project.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
-
-                      {user ? (
-
-            <span className="absolute top-2 right-2 bg-blue-600/80 hover:bg-blue-600 text-white text-xs px-2 py-1 rounded backdrop-blur-sm transition-colors">
-              Rediger projekt
-            </span>
-                      ) : null}
+            
+            {/* Overlay for Admin - We use absolute positioning so it sits on top of the Link */}
+            {user && (
+              <Link
+                to={`/admin/edit/${project.project_id}`}
+                onClick={(e) => e.stopPropagation()} // Prevents triggering the main card link
+                className="absolute top-2 right-2 bg-primary/80 hover:bg-primary text-white text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded backdrop-blur-sm transition-colors z-20"
+              >
+                Rediger
+              </Link>
+            )}
           </div>
 
           {/* Content Body */}
-          <div className="p-4">
-            <h4 className="text-blue-400 text-lg font-semibold mb-2">{project.title}</h4>
-            <p className="text-white/70 text-sm leading-relaxed mb-4">
-              {project.description?.substring(0, 80)}...
+          <div className="p-5 flex-grow">
+            <h4 className="text-accent text-lg font-bold mb-2 group-hover:text-white transition-colors">
+              {project.title}
+            </h4>
+            <p className="text-white/60 text-sm leading-relaxed mb-4 line-clamp-2">
+              {project.description}
             </p>
             
-            <div className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium">
-              Se projektet
-            </div>
+            <span className="inline-flex items-center text-primary font-semibold text-sm group-hover:translate-x-1 transition-transform">
+              Se projektet <span className="ml-1">→</span>
+            </span>
           </div>
 
           {/* Footer Area */}
-          <div className="p-4 pt-0 flex justify-between items-center mt-auto">
-            <span className="bg-[#1d2847] text-white text-[11px] px-3 py-1 rounded-full border border-[#3a4b7c]">
+          <div className="p-5 pt-0 flex justify-between items-center">
+            <span className="bg-white/5 text-white/80 text-[10px] uppercase tracking-widest px-3 py-1 rounded-full border border-white/10">
               {project.room_name}
             </span>
-            <span className="text-white/40 text-xs">
-              {new Date(project.project_date).toLocaleDateString('da-DK')}
+            <span className="text-white/30 text-xs font-medium">
+              {new Date(project.project_date).toLocaleDateString('da-DK', {
+                month: 'short',
+                year: 'numeric'
+              })}
             </span>
           </div>
         </div>

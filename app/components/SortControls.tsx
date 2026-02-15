@@ -5,26 +5,30 @@ interface SortProps {
 }
 
 export function SortControls({ sortOrder, setSortOrder }: SortProps) {
+  // Shared button style for the toggle
+  const toggleBtnBase = "px-6 py-2 rounded-lg text-[12px] font-bold  tracking-[0.15em] transition-all duration-300";
+  const activeToggle = "bg-primary text-white shadow-lg shadow-primary/20";
+  const inactiveToggle = "text-white/30 hover:text-white/60";
+
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 px-2 gap-4">
-      <h2 className="text-white text-2xl font-bold tracking-tight">Mine Projekter</h2>
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 px-4 sm:px-0 gap-6">
+      <div className="flex items-center gap-3">
+        <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+        <h2 className="text-white text-3xl font-bold tracking-tighter ">
+          Projekter
+        </h2>
+      </div>
       
       {/* Custom Toggle Group */}
-      <div className="inline-flex p-1 bg-[#121b33] rounded-xl border border-white/5 shadow-inner">
+      <div className="inline-flex p-1.5 bg-secondary rounded-2xl border border-white/5 shadow-2xl">
         <button 
-          className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all duration-200 
-            ${sortOrder === 'newest' 
-              ? 'bg-blue-600 text-white shadow-md' 
-              : 'text-white/40 hover:text-white/70'}`}
+          className={`cursor-pointer ${toggleBtnBase} ${sortOrder === 'newest' ? activeToggle : inactiveToggle}`}
           onClick={() => setSortOrder('newest')}
         >
           Nyeste
         </button>
         <button 
-          className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all duration-200 
-            ${sortOrder === 'oldest' 
-              ? 'bg-blue-600 text-white shadow-md' 
-              : 'text-white/40 hover:text-white/70'}`}
+          className={`cursor-pointer ${toggleBtnBase} ${sortOrder === 'oldest' ? activeToggle : inactiveToggle}`}
           onClick={() => setSortOrder('oldest')}
         >
           Ældste

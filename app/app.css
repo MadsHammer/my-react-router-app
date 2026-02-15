@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@theme {
+  
+  --color-primary: oklch(0.62 0.22 256);       
+  --color-primary-hover: oklch(0.52 0.21 254); 
+  
+  --color-secondary: oklch(0.22 0.05 240);     
+  --color-secondary-hover: oklch(0.28 0.06 240);
+  
+  --color-after: oklch(0.78 0.12 215);          
+}
+
 html, body { 
   background-color: #0c1121; 
   color: white !important;
@@ -16,7 +27,7 @@ html, body {
 }
 
 @layer components {
-  .bg-darkblue { background-color: #121b33 !important; }
+  .bg-darkblue { background-color: #121b33; }
   
   .hover-shadow { 
     transition: transform 0.2s, box-shadow 0.2s; 

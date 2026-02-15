@@ -21,51 +21,58 @@ export default function Login() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
+  // Using 'secondary' for the card and 'primary' for the button
   return (
-
-    <div className="flex items-center justify-center min-h-screen w-full bg-[#0c1121] px-4" style={{ minHeight: 'calc(100vh - 65px)' }}>
-      <div className="w-full max-w-md animate-fade-in">
-         {/* The Card starts here */}
-         <div className="bg-[#121b33] rounded-2xl border border-white/10 shadow-2xl">
+    <div className="flex items-center justify-center min-h-screen w-full bg-secondary/50 px-4 animate-fade-in">
+      <div className="w-full max-w-md">
+        
+        {/* Main Login Card */}
+        <div className="bg-secondary rounded-3xl border border-white/5 shadow-2xl overflow-hidden">
+          {/* Subtle top accent bar */}
+          <div className="h-1.5 w-full bg-primary"></div>
+          
           <div className="p-8 md:p-12">
-            
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-white mb-2">Admin Login</h2>
-              <p className="text-white/50 text-sm">Indtast dine oplysninger for at administrere portfolien</p>
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-black text-white mb-3 uppercase tracking-tighter">
+                Admin Login
+              </h2>
+              <p className="text-white/40 text-sm font-medium">
+                Indtast dine oplysninger for at administrere portfolien
+              </p>
             </div>
 
             <Form method="post" className="space-y-6">
               {/* Email Input */}
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-widest text-white/40 mb-2 ml-1">
+              <div className="space-y-2">
+                <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 ml-1">
                   Email
                 </label>
                 <input 
                   type="email" 
                   name="email" 
-                  className="w-full bg-[#0c1121] text-white border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/20" 
+                  className="w-full bg-secondary-hover text-white border border-white/10 rounded-xl py-4 px-5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all placeholder:text-white/10" 
                   placeholder="din@email.dk"
                   required 
                 />
               </div>
 
               {/* Password Input */}
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-widest text-white/40 mb-2 ml-1">
+              <div className="space-y-2">
+                <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 ml-1">
                   Adgangskode
                 </label>
                 <input 
                   type="password" 
                   name="password" 
-                  className="w-full bg-[#0c1121] text-white border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/20" 
+                  className="w-full bg-secondary-hover text-white border border-white/10 rounded-xl py-4 px-5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all placeholder:text-white/10" 
                   placeholder="••••••••"
                   required 
                 />
               </div>
 
-              {/* Error Message Display */}
+              {/* Error Message */}
               {actionData?.error && (
-                <div className="bg-red-500/10 border border-red-500/50 text-red-400 py-3 px-4 rounded-xl text-sm text-center animate-shake">
+                <div className="bg-red-500/5 border border-red-500/20 text-red-400 py-3 px-4 rounded-xl text-xs font-bold text-center tracking-wide">
                   {actionData.error}
                 </div>
               )}
@@ -73,12 +80,12 @@ export default function Login() {
               {/* Submit Button */}
               <button 
                 type="submit" 
-                className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:opacity-50 text-white py-3 rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2"
+                className="w-full bg-primary hover:bg-primary-hover disabled:bg-primary/20 disabled:text-white/20 text-white py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98]"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                     Logger ind...
                   </>
                 ) : (
@@ -91,7 +98,7 @@ export default function Login() {
 
         {/* Footer Link */}
         <div className="text-center mt-8">
-          <Link to="/" className="text-white/40 hover:text-white text-sm no-underline transition-colors">
+          <Link to="/" className="text-white/30 hover:text-white text-xs font-bold uppercase tracking-[0.2em] no-underline transition-colors">
             ← Tilbage til forsiden
           </Link>
         </div>
