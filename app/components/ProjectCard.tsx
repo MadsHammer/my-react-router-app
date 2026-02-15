@@ -1,26 +1,75 @@
-import { Link } from "react-router";
-
+import { Link, useLoaderData } from "react-router";
 export function ProjectCard({ project }: { project: any }) {
+  const { user } = useLoaderData() as { user: any };
+  
+const getImageUrl = (path: string) => {
+  if (!path) return "/placeholder.jpg";
+  // If it's already a full URL (old data), return it
+  if (path.startsWith('http')) return path;
+  // If it's just a path (new data), add the Supabase prefix
+  return `https://utqqeslftnzhwkcfymdj.supabase.co/storage/v1/object/public/images/${path}`;
+};
+
+// Then use it like this:
+const imageUrl = getImageUrl(project.ProjectImages?.file_name || project.featured_url);
   return (
-    <div className="col">
-      <Link to={`/projects/${project.project_id}`} className="text-decoration-none">
-      <div className="card h-100 bg-darkblue border-0 hover-shadow overflow-hidden">
-        <img 
-          src={project.featured_url} 
-          className="card-img-top" 
-          style={{ height: '200px', objectFit: 'cover' }} 
-        />
-        <div className="card-body">
-          <h5 className="text-primary">{project.title}</h5>
-          <p className="small opacity-75">{project.description?.substring(0, 80)}...</p>
+    <div className="group relative h-full">
+      <Link 
+        to={`/projects/${project.project_id}`} 
+        className="block h-full no-underline"
+      >
+        <div className="h-full bg-secondary rounded-xl overflow-hidden transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-2xl border border-white/5 flex flex-col">
+          
+          {/* Image Wrapper */}
+          <div className="relative h-48 w-full overflow-hidden">
+            <img 
+              src={imageUrl} 
+              alt={project.title}
+              className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-50"
+            />
+
+            {/* HOVER OVERLAY: Se projektet */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-widest shadow-xl transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                Se projektet
+              </span>
+            </div>
+            
+            {/* Admin Edit Button */}
+            {user && (
+              <Link
+                to={`/admin/edit/${project.project_id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded backdrop-blur-md transition-colors z-20 border border-white/10"
+              >
+                Rediger
+              </Link>
+            )}
+          </div>
+
+          {/* Content Body */}
+          <div className="p-5 flex-grow">
+            <h4 className="text-accent text-lg font-bold mb-2 group-hover:text-primary transition-colors">
+              {project.title}
+            </h4>
+            <p className="text-white/60 text-sm leading-relaxed line-clamp-2">
+              {project.description}
+            </p>
+          </div>
+
+          {/* Footer Area */}
+          <div className="p-5 pt-0 flex justify-between items-center">
+            <span className="bg-white/5 text-white/80 text-[10px] uppercase tracking-widest px-3 py-1 rounded-full border border-white/10">
+              {project.room_name}
+            </span>
+            <span className="text-white/30 text-xs font-medium uppercase tracking-tighter">
+              {new Date(project.project_date).toLocaleDateString('da-DK', {
+                month: 'short',
+                year: 'numeric'
+              })}
+            </span>
+          </div>
         </div>
-        <div className="card-footer d-flex justify-content-between align-items-center border-0 bg-transparent">
-          <span className="room-pill">{project.room_name}</span>
-          <span className="opacity-50 small">
-            {new Date(project.project_date).toLocaleDateString('da-DK')}
-          </span>
-        </div>
-      </div>
       </Link>
     </div>
   );
