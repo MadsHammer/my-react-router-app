@@ -23,6 +23,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   if (projectError || !projectData) {
     throw new Response("Projekt ikke fundet", { status: 404 });
   }
+  
 
   const { data: imagesData, error: imagesError } = await supabase
     .from('ProjectImages')
