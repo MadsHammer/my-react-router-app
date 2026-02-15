@@ -24,7 +24,7 @@ export function Sidebar({ rooms, selectedRoom, onSelectRoom }: SidebarProps) {
           onClick={() => onSelectRoom(null)}
         >
           {selectedRoom === null && (
-            <span className="absolute left-0 w-1 h-4 bg-white rounded-full my-auto inset-y-0 -ml-1 "></span>
+            <span ></span>
           )}
           Alle rum
         </button>
@@ -37,7 +37,7 @@ export function Sidebar({ rooms, selectedRoom, onSelectRoom }: SidebarProps) {
             onClick={() => onSelectRoom(room)}
           >
             {selectedRoom === room && (
-              <span className="absolute left-0 w-1 h-4 bg-white rounded-full my-auto inset-y-0 -ml-1"></span>
+              <span></span>
             )}
             {room}
           </button>

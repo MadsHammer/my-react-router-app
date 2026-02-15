@@ -10,17 +10,19 @@ export function Navbar() {
         
         {/* Brand - Using Accent color for the name */}
         <Link className="text-xl font-bold text-white hover:text-accent no-underline transition-colors" to="/">
-          Mads Hammer
+          Hammerly
         </Link>
         
         <div className="flex items-center gap-6">
           {user ? (
             <div className="flex items-center gap-6">
+              
+
               <Link 
-                to="/admin" 
+                to="/projectForm" 
                 className="text-white/60 hover:text-white text-sm no-underline transition-colors font-medium"
               >
-                Admin Panel
+                Tilføj Projekt
               </Link>
               
               <Form method="post" action="/logout">
@@ -31,6 +33,8 @@ export function Navbar() {
                   Log ud
                 </button>
               </Form>
+
+
             </div>
           ) : (
             <Link 
