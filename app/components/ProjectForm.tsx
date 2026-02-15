@@ -1,6 +1,8 @@
 import { useState, type ChangeEvent } from "react";
 import { useSubmit } from "react-router";
 import imageCompression from 'browser-image-compression';
+import { supabase } from "~/lib/supabase";
+
 
 interface ImagePreview {
   id: string;
@@ -43,59 +45,58 @@ export function ProjectForm({
 
   // GJORT ASYNC FOR AT KUNNE BRUGE AWAIT
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsCompressing(true); // Start visuel feedback
-    
-    const formData = new FormData(e.currentTarget);
+  e.preventDefault();
+  setIsCompressing(true);
+  
+  const formData = new FormData(e.currentTarget);
+  formData.delete("before_images");
+  formData.delete("after_images");
 
-    // 1. Ryd standard inputs
-    formData.delete("before_images");
-    formData.delete("after_images");
+  try {
+    let featuredIndex = 0;
 
-    // Indstillinger for komprimering
-    const options = {
-      maxSizeMB: 0.8,          // Prøv at ramme under 1MB
-      maxWidthOrHeight: 1920, // Bevarer god kvalitet
-      useWebWorker: true,
-    };
-
-    try {
-      // 2. Loop igennem billeder, komprimer og find Featured Index
-      let featuredIndex = 0;
+    // Vi uploader billederne Ét efter Ét direkte til Supabase
+    for (let i = 0; i < images.length; i++) {
+      const img = images[i];
       
-      for (let i = 0; i < images.length; i++) {
-        const img = images[i];
-        const fieldName = img.type === 'before' ? 'before_images' : 'after_images';
-        
-        let fileToUpload = img.file;
+      // 1. Komprimering (valgfrit men godt for pladsen)
+      const compressedFile = await imageCompression(img.file, {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 1600,
+        useWebWorker: true,
+      });
 
-        // Komprimer kun hvis filen er over 1MB
-        if (img.file.size > 1024 * 1024) {
-          try {
-            fileToUpload = await imageCompression(img.file, options);
-          } catch (error) {
-            console.error("Compression failed, using original:", error);
-          }
-        }
+      // 2. Upload direkte til Supabase Storage
+      const fileName = `${Date.now()}-${img.id}-${img.type}.jpg`;
+      const { data, error } = await supabase.storage
+  .from('images') // <--- Tjek at dette ord matcher navnet på din bucket 100% (små bogstaver)
+  .upload(fileName, compressedFile, {
+    upsert: true // Meget vigtigt!
+  });
+      if (error) throw error;
 
-        formData.append(fieldName, fileToUpload);
-        
-        if (img.id === featuredId) {
-          featuredIndex = i;
-        }
+      // 3. I stedet for selve filen, sender vi nu kun STIEN til vores action
+      const fieldName = img.type === 'before' ? 'before_paths' : 'after_paths';
+      formData.append(fieldName, data.path);
+      
+      if (img.id === featuredId) {
+        featuredIndex = i;
       }
-
-      // 3. Tilføj featured index
-      formData.append("featured_index", featuredIndex.toString());
-
-      // 4. Send
-      submit(formData, { method: "post", encType: "multipart/form-data" });
-    } catch (err) {
-      console.error("Fejl i submit:", err);
-    } finally {
-      setIsCompressing(false);
     }
-  };
+
+    formData.append("featured_index", featuredIndex.toString());
+
+    // Nu sender vi formData, som KUN indeholder tekst (stier), ikke tunge filer!
+    // Det fylder kun få KB, så Vercel fejler aldrig med 413.
+    submit(formData, { method: "post" });
+
+  } catch (err) {
+    console.error("Upload fejl:", err);
+    alert("Fejl ved upload af billeder.");
+  } finally {
+    setIsCompressing(false);
+  }
+};
 
   const inputClasses = "block w-full bg-secondary border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/20 focus:border-primary focus:ring-1 focus:ring-primary transition-all appearance-none";
   const labelClasses = "block text-[10px] uppercase tracking-[0.2em] text-white/40 font-bold ml-1 mb-2";
