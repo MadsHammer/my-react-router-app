@@ -2,7 +2,18 @@ import { redirect, type ActionFunctionArgs, useLoaderData, useNavigation } from 
 import { supabase } from "~/lib/supabase";
 import { ProjectForm } from "../components/ProjectForm";
 
+/**
+ * LOADER: SIKRER AT KUN ADMIN KAN SE SIDEN
+ */
 export async function loader() {
+  // Tjek om brugeren er logget ind i Supabase
+  const { data: { session } } = await supabase.auth.getSession();
+
+  // Hvis ikke logget ind -> smid dem til login-siden
+  if (!session) {
+    return redirect("/login");
+  }
+
   const { data: rooms } = await supabase
     .from('Rooms')
     .select('room_name')
@@ -11,8 +22,11 @@ export async function loader() {
   return { rooms: rooms?.map(r => r.room_name) || [] };
 }
 
+/**
+ * ACTION: GEMMER DATA I DATABASEN (Kører på serveren)
+ */
 export async function action({ request }: ActionFunctionArgs) {
-  console.log(">>> 1. Action Received (New Path Strategy)");
+  console.log(">>> 1. Action Received");
   
   try {
     const formData = await request.formData();
@@ -22,12 +36,10 @@ export async function action({ request }: ActionFunctionArgs) {
     const project_date = formData.get("project_date") as string;
     const featuredIndex = parseInt(formData.get("featured_index") as string || "0");
 
-    // --- HER ER ÆNDRINGEN ---
-    // Vi henter stier (tekst) i stedet for filer
     const beforePaths = formData.getAll("before_paths") as string[];
     const afterPaths = formData.getAll("after_paths") as string[];
 
-    // 1. Get Room ID
+    // 1. Find Room ID
     const { data: roomData, error: roomError } = await supabase
       .from('Rooms')
       .select('room_id')
@@ -48,41 +60,29 @@ export async function action({ request }: ActionFunctionArgs) {
       .select().single();
 
     if (pError) throw pError;
-    console.log(">>> 2. Project Created:", project.project_id);
 
-    // 3. Process Image Paths (Vi uploader IKKE her, de er allerede i Storage)
+    // 3. Process Image Paths
     const allPaths = [
       ...beforePaths.map(p => ({ path: p, type: 'before' })),
       ...afterPaths.map(p => ({ path: p, type: 'after' }))
     ];
 
-    console.log(`>>> 3. Creating DB references for ${allPaths.length} images...`);
-
     let featuredImageDbId: number | null = null;
 
     for (let i = 0; i < allPaths.length; i++) {
       const item = allPaths[i];
-      
-      // Bestem kategori: 0 for før, 1 for efter, 2 for valgt forside
       let finalCategory = item.type === 'before' ? 0 : 1;
-      if (i === featuredIndex) {
-        finalCategory = 2;
-      }
+      if (i === featuredIndex) finalCategory = 2;
 
       const { data: imgRecord, error: imgErr } = await supabase
         .from('ProjectImages')
         .insert([{
           project_id: project.project_id,
-          file_name: item.path, // Dette er stien fra Storage
+          file_name: item.path,
           content_type: 'image/jpeg',
           Category: finalCategory
         }])
         .select().single();
-
-      if (imgErr) {
-        console.error("DB Image Error:", imgErr);
-        continue;
-      }
 
       if (imgRecord && i === featuredIndex) {
         featuredImageDbId = imgRecord.project_image_id;
@@ -97,7 +97,6 @@ export async function action({ request }: ActionFunctionArgs) {
         .eq('project_id', project.project_id);
     }
 
-    console.log(">>> 4. Success!");
     return redirect("/");
 
   } catch (err: any) {
