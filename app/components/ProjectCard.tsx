@@ -4,13 +4,10 @@ export function ProjectCard({ project }: { project: any }) {
   
 const getImageUrl = (path: string) => {
   if (!path) return "/placeholder.jpg";
-  // If it's already a full URL (old data), return it
   if (path.startsWith('http')) return path;
-  // If it's just a path (new data), add the Supabase prefix
   return `https://utqqeslftnzhwkcfymdj.supabase.co/storage/v1/object/public/images/${path}`;
 };
 
-// Then use it like this:
 const imageUrl = getImageUrl(project.ProjectImages?.file_name || project.featured_url);
   return (
     <div className="group relative h-full">
