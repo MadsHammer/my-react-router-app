@@ -58,8 +58,19 @@ useEffect(() => {
   };
 
   // GJORT ASYNC FOR AT KUNNE BRUGE AWAIT
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
+  
+  // 1. Få et friskt token med det samme, så vi har 60 minutter at løbe på
+  const { error: refreshError } = await supabase.auth.refreshSession();
+  
+  if (refreshError) {
+    console.error("Kunne ikke forny session inden upload:", refreshError);
+    // Hvis der er fejl her, er det bedre at stoppe end at fejle midt i 10 uploads
+    alert("Din session er udløbet. Log venligst ind igen.");
+    return;
+  }
+
   setIsCompressing(true);
   
   const formData = new FormData(e.currentTarget);
