@@ -23,7 +23,6 @@ export function SortControls({ sortOrder, setSortOrder, projects }: SortProps) {
           <span className="text-primary text-[12px] font-black tracking-widest">
             {projects.length}
           </span>
-        </div>
       </div>
       
       {/* Custom Toggle Group */}
