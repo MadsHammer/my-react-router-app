@@ -38,7 +38,7 @@ export default function Index() {
 
        
         <main className="lg:col-span-9">
-          <SortControls sortOrder={sortOrder} setSortOrder={setSortOrder} />
+          <SortControls sortOrder={sortOrder} setSortOrder={setSortOrder} projects={filteredProjects} />
           <ProjectGrid projects={filteredAndSorted} />
         </main>
 
