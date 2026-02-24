@@ -2,9 +2,10 @@
 interface SortProps {
   sortOrder: 'newest' | 'oldest';
   setSortOrder: (order: 'newest' | 'oldest') => void;
+  projects: any[];
 }
 
-export function SortControls({ sortOrder, setSortOrder }: SortProps) {
+export function SortControls({ sortOrder, setSortOrder, projects }: SortProps) {
   // Shared button style for the toggle
   const toggleBtnBase = "px-6 py-2 rounded-lg text-[12px] font-bold  tracking-[0.15em] transition-all duration-300";
   const activeToggle = "bg-primary text-white shadow-lg shadow-primary/20";
@@ -17,6 +18,12 @@ export function SortControls({ sortOrder, setSortOrder }: SortProps) {
         <h2 className="text-white text-3xl font-bold tracking-tighter ">
           Projekter
         </h2>
+      </div>
+      <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+          <span className="text-primary text-[12px] font-black tracking-widest">
+            {projects.length}
+          </span>
+        </div>
       </div>
       
       {/* Custom Toggle Group */}
