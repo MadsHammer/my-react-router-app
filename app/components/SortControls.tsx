@@ -46,4 +46,4 @@ export function SortControls({ sortOrder, setSortOrder, projects }: SortProps) {
     </div>
   );
 }
-}
+
