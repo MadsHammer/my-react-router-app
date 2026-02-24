@@ -11,6 +11,8 @@ interface ImagePreview {
   type: 'before' | 'after';
 }
 
+
+
 export function ProjectForm({ 
   initialData, 
   isSubmitting, 
@@ -24,6 +26,18 @@ export function ProjectForm({
   const [featuredId, setFeaturedId] = useState<string | null>(null);
   const [isCompressing, setIsCompressing] = useState(false); // Ny state til komprimering
   const submit = useSubmit();
+
+  // Tilføj dette i toppen af din ProjectForm komponent
+useEffect(() => {
+  const heartbeat = setInterval(async () => {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      console.log("Session fornyet automatisk");
+    }
+  }, 1000 * 60 * 4); // Kører hvert 4. minut
+
+  return () => clearInterval(heartbeat);
+}, []);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>, type: 'before' | 'after') => {
     if (e.target.files) {
