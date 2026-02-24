@@ -17,17 +17,18 @@ export async function loader() {
 export default function Index() {
   const { projects } = useLoaderData<typeof loader>();
   const { 
-    filteredAndSorted, uniqueRooms, selectedRoom, setSelectedRoom, sortOrder, setSortOrder 
+    filteredAndSorted, // Det er denne her, der indeholder de projekter, der vises lige nu
+    uniqueRooms, 
+    selectedRoom, 
+    setSelectedRoom, 
+    sortOrder, 
+    setSortOrder 
   } = useProjectFilters(projects);
 
   return (
- 
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      
-      
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-       
         <aside className="lg:col-span-3">
           <Sidebar 
             rooms={uniqueRooms} 
@@ -36,13 +37,19 @@ export default function Index() {
           />
         </aside>
 
-       
         <main className="lg:col-span-9">
-          <SortControls sortOrder={sortOrder} setSortOrder={setSortOrder} projects={filteredProjects} />
+          
+          <SortControls 
+            sortOrder={sortOrder} 
+            setSortOrder={setSortOrder} 
+            projects={filteredAndSorted} 
+          />
+          
           <ProjectGrid projects={filteredAndSorted} />
         </main>
 
       </div>
     </div>
   );
+}
 }
