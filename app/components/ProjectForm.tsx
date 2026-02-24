@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { useSubmit } from "react-router";
 import imageCompression from 'browser-image-compression';
 import { supabase } from "~/lib/supabase";
